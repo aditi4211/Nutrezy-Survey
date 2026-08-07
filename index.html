@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nutrezy | We'd like to know you better</title>
+<meta name="description" content="Help Nutrezy create healthier snacks by picking a quick bubble survey.">
+
+<!-- Google Fonts: Poppins (display) + Nunito (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== Animated pastel background (pure CSS, see style.css) ===== -->
+  <div class="bg-animated" aria-hidden="true"></div>
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <!-- ===== Header ===== -->
+  <header class="site-header">
+    <a class="logo-link" href="https://nutrezy.com/?srsltid=AfmBOoog9w4-G4TSyGgMgGepI1TNs-XyeUBOIiqEljOVkJaFHODbN0-_"
+       target="_blank" rel="noopener noreferrer" aria-label="Visit Nutrezy website (opens in a new tab)">
+      <span class="logo-text">Hi, We are</span>
+      <!-- Replace assets/nutrezy-logo.png with your real logo (see README) -->
+      <img src="assets/nutrezy-logo.png" alt="Nutrezy logo" class="logo-img" width="120" height="36">
+    </a>
+  </header>
+
+  <!-- ===== Main hero + floating circles ===== -->
+  <main class="hero" id="hero">
+
+    <div class="hero-copy">
+      <h1 class="hero-title">We'd like to know&nbsp;you better <span class="wink">;)</span></h1>
+      <p class="hero-sub">10 quick conversations.<br>Pick any bubble to begin.</p>
+    </div>
+
+    <!-- Floating circles are injected by script.js so positions/speeds randomize each load -->
+    <div class="circles-field" id="circlesField" aria-label="Choose a survey"></div>
+
+  </main>
+
+  <!-- ===== Survey modal (single reusable popup, filled dynamically) ===== -->
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-card" id="modalCard">
+
+      <button class="modal-close" id="modalClose" aria-label="Close survey">&times;</button>
+
+      <!-- Progress -->
+      <div class="modal-progress">
+        <span class="progress-label" id="progressLabel">Survey 1 of 10</span>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <span class="progress-percent" id="progressPercent">10%</span>
+      </div>
+
+      <h2 class="modal-title" id="modalTitle"></h2>
+      <p class="modal-objective" id="modalObjective"></p>
+
+      <form id="surveyForm" class="survey-form"></form>
+
+      <div class="modal-nav">
+        <button type="button" class="btn btn-ghost" id="btnPrev">Previous</button>
+        <button type="button" class="btn btn-gradient" id="btnNext">Next</button>
+        <button type="button" class="btn btn-gradient" id="btnSubmit" hidden>Submit</button>
+      </div>
+
+      <!-- Thank-you state (shown after submit) -->
+      <div class="thank-you" id="thankYou" hidden>
+        <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+        <div class="thank-you-emoji">🎉</div>
+        <h2>Thank You!</h2>
+        <p>Thank you for helping Nutrezy understand you better.</p>
+        <p>Every response helps us create healthier snacks you'll actually love.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <footer class="site-footer">
+    <div class="footer-card">
+      <p class="footer-name">Komal Kadaba</p>
+      <p class="footer-role">Co-founder &amp; CEO</p>
+      <a class="footer-email" href="mailto:komal@nutrezy.com">komal@nutrezy.com</a>
+    </div>
+
+    <div class="footer-card footer-card-center">
+      <p class="footer-heading">Follow Nutrezy on Instagram</p>
+      <!-- Replace assets/instagram-qr.png with the QR from your screenshot -->
+      <img src="assets/instagram-qr.png" alt="QR code to Nutrezy's Instagram" class="footer-qr" width="110" height="110">
+      <span class="footer-handle">@NUTREZY</span>
+    </div>
+
+    <div class="footer-card">
+      <p class="footer-heading">Connect with Komal on LinkedIn</p>
+      <!-- Replace assets/linkedin-qr.png with the QR from your screenshot -->
+      <img src="assets/linkedin-qr.png" alt="QR code to Komal's LinkedIn" class="footer-qr" width="110" height="110">
+      <span class="footer-handle">linkedin.com/in/komal-mahesh-kadaba</span>
+    </div>
+  </footer>
+
+  <!-- Cursor glow element -->
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

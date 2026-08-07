@@ -1,0 +1,26 @@
+{
+  "surveyId": 3,
+  "surveyTitle": "Favourite Brands",
+  "submittedAt": "2026-08-07T10:07:16.501Z",
+  "name": "Aditi",
+  "phone": "7698178464",
+  "email": "aditi15052006@gmail.com",
+  "answers": [
+    {
+      "question": "Which healthy snack brands do you buy most often?",
+      "answer": "Max Protien"
+    },
+    {
+      "question": "Which brand do you trust the most?",
+      "answer": "The whole truth"
+    },
+    {
+      "question": "Have you heard of Nutrezy?",
+      "answer": "Yes"
+    },
+    {
+      "question": "Why do you prefer your favourite brand?",
+      "answer": "Tasty, trust worthy"
+    }
+  ]
+}
