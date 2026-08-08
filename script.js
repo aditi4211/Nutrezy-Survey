@@ -19,7 +19,7 @@
    Leave it blank ("") and the site will fall back to downloading each
    response as a .json file instead, so you never lose data either way. */
 const CONFIG = {
-  GOOGLE_SHEETS_URL: "https://script.google.com/macros/s/AKfycbzL66dgy2xR57UZ2gooE_jsOD_2yRk54G0EZ3BBcnc7xshVUkByItjVD7MBntzK9MYC/exec"
+  GOOGLE_SHEETS_URL: "https://script.google.com/macros/s/AKfycbw5UZkUsMd84taQVxdxFxVRnZgxgXMSfFmDIHtI-Mo/dev"
 };
 
 /* ---------- 1. SURVEY DATA ---------- */
