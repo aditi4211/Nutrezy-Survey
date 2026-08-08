@@ -386,24 +386,6 @@ textarea.form-textarea {
 
 textarea.form-textarea { min-height: 90px; resize: vertical; }
 
-/* Final "who filled this in" step, shown at the end of every survey */
-.contact-field { margin-bottom: 4px; }
-
-.contact-label {
-  display: block;
-  font-weight: 700;
-  font-size: 0.85rem;
-  margin-bottom: 6px;
-  color: var(--ink-soft);
-}
-
-.contact-error {
-  color: #C0568A;
-  font-weight: 700;
-  font-size: 0.85rem;
-  min-height: 1.2em;
-}
-
 /* ---------- 8. BUTTONS ---------- */
 .modal-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 26px; }
 
