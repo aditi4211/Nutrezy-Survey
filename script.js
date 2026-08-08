@@ -19,7 +19,7 @@
    Leave it blank ("") and the site will fall back to downloading each
    response as a .json file instead, so you never lose data either way. */
 const CONFIG = {
-  GOOGLE_SHEETS_URL: "https://script.google.com/macros/s/AKfycbwUardGWE14BMuRYK8JjkaSF8ZDlRXYikQXa_zIXdhlwFRHt2EAIZfadkvzpTWypX9o/exec"
+  GOOGLE_SHEETS_URL: ""
 };
 
 /* ---------- 1. SURVEY DATA ---------- */
@@ -262,20 +262,13 @@ const thankYou = document.getElementById("thankYou");
 let currentSurvey = null;
 let currentQIndex = 0;
 let answers = {};
-let contactInfo = { name: "", phone: "", email: "" };
 let lastFocusedEl = null;
-
-/* The contact-details screen is one extra "step" tacked onto the end of
-   every survey. It isn't in SURVEYS — it's the same for all 10. */
-function totalSteps() { return currentSurvey.questions.length + 1; }
-function isContactStep(index) { return index === currentSurvey.questions.length; }
 
 function openSurvey(surveyId) {
   currentSurvey = SURVEYS.find(s => s.id === surveyId);
   currentQIndex = 0;
   const saved = loadProgress(surveyId);
   answers = (saved && saved.answers) || {};
-  contactInfo = (saved && saved.contactInfo) || { name: "", phone: "", email: "" };
   currentQIndex = (saved && saved.qIndex) || 0;
 
   thankYou.hidden = true;
@@ -311,17 +304,9 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && !overlay.hidden) closeSurvey();
 });
 
-/* ---------- 4. RENDER A QUESTION (or the final contact-details step) ---------- */
+/* ---------- 4. RENDER A QUESTION ---------- */
 function renderQuestion() {
   surveyForm.innerHTML = "";
-
-  if (isContactStep(currentQIndex)) {
-    renderContactStep();
-    updateProgressUI();
-    updateNavButtons();
-    saveProgress(currentSurvey.id, answers, currentQIndex);
-    return;
-  }
 
   const q = currentSurvey.questions[currentQIndex];
   const savedAnswer = answers[currentQIndex];
@@ -402,84 +387,6 @@ function renderQuestion() {
   saveProgress(currentSurvey.id, answers, currentQIndex);
 }
 
-/* One last screen at the end of every survey: who filled it in.
-   Kept separate from the survey questions so SURVEYS stays exactly
-   matched to the uploaded questionnaire wording. */
-function renderContactStep() {
-  const block = document.createElement("div");
-  block.className = "question-block";
-
-  const intro = document.createElement("p");
-  intro.className = "question-text";
-  intro.textContent = "Almost done! Who are we chatting with?";
-  block.appendChild(intro);
-
-  const fields = [
-    { key: "name", type: "text", label: "Name", placeholder: "Your name" },
-    { key: "phone", type: "tel", label: "Phone number", placeholder: "e.g. 98765 43210" },
-    { key: "email", type: "email", label: "Email address", placeholder: "you@example.com" }
-  ];
-
-  fields.forEach(f => {
-    const wrap = document.createElement("div");
-    wrap.className = "contact-field";
-    const fieldLabel = document.createElement("label");
-    fieldLabel.textContent = f.label;
-    fieldLabel.className = "contact-label";
-    fieldLabel.htmlFor = "contact_" + f.key;
-    const input = document.createElement("input");
-    input.type = f.type;
-    input.className = "form-text";
-    input.placeholder = f.placeholder;
-    input.value = contactInfo[f.key] || "";
-    input.id = "contact_" + f.key;
-    input.addEventListener("input", () => {
-      contactInfo[f.key] = input.value;
-      saveProgress(currentSurvey.id, answers, currentQIndex);
-      contactError.textContent = "";
-    });
-    wrap.appendChild(fieldLabel);
-    wrap.appendChild(input);
-    block.appendChild(wrap);
-  });
-
-  const contactError = document.createElement("p");
-  contactError.className = "contact-error";
-  contactError.setAttribute("role", "alert");
-  block.appendChild(contactError);
-
-  surveyForm.appendChild(block);
-}
-
-/* Simple, friendly validation — just enough to make responses usable */
-function validateContactInfo() {
-  // Only relevant when the contact step is actually on screen.
-  if (!currentSurvey || !isContactStep(currentQIndex)) return true;
-
-  const errorEl = surveyForm.querySelector(".contact-error");
-  const name = (contactInfo.name || "").trim();
-  const phone = (contactInfo.phone || "").trim();
-  const email = (contactInfo.email || "").trim();
-  const phoneDigits = phone.replace(/\D/g, "");
-
-  if (!name) {
-    if (errorEl) errorEl.textContent = "Please tell us your name.";
-    document.getElementById("contact_name")?.focus();
-    return false;
-  }
-  if (phoneDigits.length < 7) {
-    if (errorEl) errorEl.textContent = "Please enter a valid phone number.";
-    document.getElementById("contact_phone")?.focus();
-    return false;
-  }
-  if (!email || !email.includes("@") || !email.includes(".")) {
-    if (errorEl) errorEl.textContent = "Please enter a valid email address.";
-    document.getElementById("contact_email")?.focus();
-    return false;
-  }
-  return true;
-}
-
 function saveCurrentAnswer(q) {
   if (q.type === "checkbox") {
     const checked = [...surveyForm.querySelectorAll('input[type="checkbox"]:checked')].map(i => i.value);
@@ -497,7 +404,7 @@ function saveCurrentAnswer(q) {
 
 /* ---------- 5. PROGRESS + NAV ---------- */
 function updateProgressUI() {
-  const total = totalSteps();
+  const total = currentSurvey.questions.length;
   const current = currentQIndex + 1;
   const percent = Math.round((current / total) * 100);
   progressLabel.textContent = `Survey ${currentSurvey.id} of ${SURVEYS.length}`;
@@ -506,7 +413,7 @@ function updateProgressUI() {
 }
 
 function updateNavButtons() {
-  const isLast = currentQIndex === totalSteps() - 1;
+  const isLast = currentQIndex === currentSurvey.questions.length - 1;
   btnPrev.disabled = currentQIndex === 0;
   btnNext.hidden = isLast;
   btnSubmit.hidden = !isLast;
@@ -517,15 +424,10 @@ btnPrev.addEventListener("click", () => {
 });
 
 btnNext.addEventListener("click", () => {
-  if (currentQIndex < totalSteps() - 1) { currentQIndex++; renderQuestion(); }
+  if (currentQIndex < currentSurvey.questions.length - 1) { currentQIndex++; renderQuestion(); }
 });
 
-btnSubmit.addEventListener("click", () => {
-  // The submit button only shows on the final step, which is always
-  // the contact-details step — validate it before sending anything.
-  if (!validateContactInfo()) return;
-  submitSurvey();
-});
+btnSubmit.addEventListener("click", submitSurvey);
 
 /* ---------- 6. SUBMIT / THANK YOU / CONFETTI ---------- */
 function submitSurvey() {
@@ -534,9 +436,6 @@ function submitSurvey() {
     surveyId: currentSurvey.id,
     surveyTitle: currentSurvey.title,
     submittedAt: new Date().toISOString(),
-    name: contactInfo.name || "",
-    phone: contactInfo.phone || "",
-    email: contactInfo.email || "",
     answers: currentSurvey.questions.map((q, idx) => ({ question: q.text, answer: answers[idx] ?? null }))
   };
   storeCompletedResponse(responseRecord);
@@ -606,10 +505,7 @@ function submitToGoogleSheet(record) {
   const flatRow = {
     "Survey ID": record.surveyId,
     "Survey Title": record.surveyTitle,
-    "Submitted At": record.submittedAt,
-    "Name": record.name,
-    "Phone": record.phone,
-    "Email": record.email
+    "Submitted At": record.submittedAt
   };
   record.answers.forEach((a, i) => {
     flatRow[`Q${i + 1}: ${a.question}`] = Array.isArray(a.answer) ? a.answer.join(", ") : (a.answer ?? "");
@@ -634,7 +530,7 @@ function progressKey(surveyId) { return `nutrezy_progress_survey_${surveyId}`; }
 
 function saveProgress(surveyId, answersObj, qIndex) {
   try {
-    localStorage.setItem(progressKey(surveyId), JSON.stringify({ answers: answersObj, contactInfo, qIndex }));
+    localStorage.setItem(progressKey(surveyId), JSON.stringify({ answers: answersObj, qIndex }));
   } catch (e) { /* localStorage unavailable — fail silently, survey still works in-session */ }
 }
 
@@ -642,7 +538,7 @@ function loadProgress(surveyId) {
   try {
     const raw = localStorage.getItem(progressKey(surveyId));
     if (!raw) return null;
-    return JSON.parse(raw); // { answers, contactInfo, qIndex }
+    return JSON.parse(raw); // { answers, qIndex }
   } catch (e) { return null; }
 }
 
